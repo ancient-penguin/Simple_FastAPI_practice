@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship
 from database import Base
 
 class User(Base):
-    __tablename__ = "user"
+    __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String(120), unique=True, nullable=False)
@@ -18,6 +18,6 @@ class Memo(Base):
     content = Column(Text, nullable=False)
 
     #외래키
-    user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     #관계 설정
     author = relationship("User", back_populates="memos")

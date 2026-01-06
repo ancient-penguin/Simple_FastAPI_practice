@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 import models
 from database import engine
-from routers import memos, users
+from router import memos, users
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -14,8 +14,6 @@ app.include_router(memos.router)
 @app.get('/')
 def home():
     return {"message" : "서버가 정상 작동중", "status" : "success"}
-
-#sign_in api
 
 
 

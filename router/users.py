@@ -2,7 +2,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 import models, schemas, auth
-from database import get_db
+from dependencies import get_db
 
 router = APIRouter(
     tags=["users"]
