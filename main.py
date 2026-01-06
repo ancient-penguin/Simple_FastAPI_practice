@@ -100,7 +100,73 @@ def create_memo(
     return new_memo
 
 #viewing memo
-@app.get("/memos", response_model=)
+@app.get("/memos", response_model=list[schemas.Memo])
+def read_memos(
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
+    memos = db.query(models.Memo)\
+    .filter(models.Memo.user_id == current_user.id)\
+    .offset(skip)\
+    .limit(limit)\
+    .all()
+
+    return memos
 
 #update_memo
-@app.put("/memos/<int:id>", response_model=schemas.Memo)
+@app.put("/memos/{memo_id}", response_model=schemas.Memo)
+def update_memo(
+    memo_id: int,
+    memo_data: schemas.MemoCreate, #수정할 내용
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
+
+    memo = db.query(models.Memo).filter(models.Memo.id == memo_id).first()
+
+    if memo is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="메모를 찾을 수 없음"
+        )
+    
+    if memo.user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, 
+            detail="본인 메모만 수정 가능"
+        )
+    
+    memo.content = memo_data.content
+    db.commit()
+    db.refresh(memo)
+
+    return memo
+
+#delete memo
+@app.delte("/memo/{memo_id}")
+def delete_memo(
+    memo_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
+    memo = db.query(models.Memo).filter(models.Memo.id == memo_id).first()
+
+    if memo is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="메모를 찾을 수 없음"
+        )
+
+    if memo.user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="본인의 메모만 삭제할 수 있음"
+        )
+    
+    db.delete(memo)
+    db.commit()
+
+    return {"message" : "메모 삭제 완료"}
+
