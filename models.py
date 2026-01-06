@@ -12,7 +12,7 @@ class User(Base):
     memos = relationship("Memo", back_populates="author")
 
 class Memo(Base):
-    __tablename__ = "name"
+    __tablename__ = "memos"
 
     id = Column(Integer, primary_key=True, index=True)
     content = Column(Text, nullable=False)

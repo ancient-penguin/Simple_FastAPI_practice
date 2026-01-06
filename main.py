@@ -95,7 +95,7 @@ def create_memo(
     
     db.add(new_memo)
     db.commit()
-    db.refresh(new_memo) # DB에서 방금 저장된 따끈따끈한 데이터(ID 포함)를 다시 읽어옴
+    db.refresh(new_memo) # DB에서 방금 저장된 데이터다시 읽어옴
     
     return new_memo
 
@@ -145,7 +145,7 @@ def update_memo(
     return memo
 
 #delete memo
-@app.delte("/memo/{memo_id}")
+@app.delete("/memo/{memo_id}")
 def delete_memo(
     memo_id: int,
     db: Session = Depends(get_db),
